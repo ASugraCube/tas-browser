@@ -1,8 +1,14 @@
 {
   "name": "tas-browser",
   "version": "1.0.0",
-  "description": "My attempt at making an application for tasing web games.",
-  "main": "index.js",
+  "description": "TAS tools for web games.",
+  "scripts": {
+    "dev": "nw src/"
+  },
   "author": "ASugraCube",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "nw": "^0.70.1-sdk",
+    "nw-builder": "^4.0.0"
+  }
 }

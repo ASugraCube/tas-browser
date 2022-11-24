@@ -1,0 +1,10 @@
+{
+  "name": "src",
+  "main": "view/index.html",
+  "window": {
+    "title": "TAS Browser"
+  },
+  "dependencies": {
+    "puppeteer": "^19.3.0"
+  }
+}
