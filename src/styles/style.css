@@ -13,6 +13,11 @@ h1{
     display:block;
 }
 
+.br{
+    margin:0 0 1.2em 0;
+    display:block;
+}
+
 p{
     margin:0.35em 0;
     line-height:1.2em;
@@ -29,4 +34,8 @@ a{
 
 a:hover{
     background-color:rgb(106, 231, 208);
+}
+
+a:active{
+    background-color:rgb(189, 243, 233);
 }
