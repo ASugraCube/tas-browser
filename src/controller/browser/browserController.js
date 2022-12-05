@@ -8,28 +8,41 @@ class BrowserController{
     async init(){
         this.browser=await puppeteer.launch({
             headless: false,
-            devtools: false
+            devtools: false,
+            defaultViewport: null,
+            args:[
+                "--disable-background-timer-throttling",
+                "--disable-backgrounding-occluded-windows",
+                "--disable-renderer-backgrounding"
+            ]
         });
-
     }
 
     async attach(){
         let page=(await this.browser.pages())[0];
-        //let frame=page.frames()[0];
-        await page.evaluate(()=>{
-            document.title = 'New Title';
-        });
-        /*
+        let frames=(await page.$$("iframe"));
+        for(let i=0; i<frames.length; i++){
+            frames[i]=await frames[i].contentFrame();
+        }
+        
+        //evaluate not awaited
         page.evaluate(()=>{
             let old=performance.now;
             performance.now=()=>old.call(performance)*.1;
         });
-        */
-        /*
-        frame.evaluate(()=>{
-            console.log("hello");
+        frames.forEach(frame=>{
+            frame.evaluate(()=>{
+                let old=performance.now;
+                performance.now=()=>old.call(performance)*.1;
+            });
         });
-        */
+
+        await page.exposeFunction("onKeyDown", key=>{
+            alert(key);
+        });
+        await page.evaluate(()=>{
+            window.addEventListener("keydown", e=>onKeyDown(e.code));
+        });
     }
 }
 module.exports=new BrowserController();
