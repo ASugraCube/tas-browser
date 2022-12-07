@@ -23,28 +23,16 @@ class BrowserController{
     async attach(){
         let page=(await this.browser.pages())[0];
         let frames=page.frames();
-        
-        /* TODO debug
-        page.evaluate(()=>{
-            let old=performance.now;
-            performance.now=()=>old.call(performance)*.1;
-        });
-        frames.forEach(frame=>{
-            frame.evaluate(()=>{
-                let old=performance.now;
-                performance.now=()=>old.call(performance)*.1;
-            });
-        });
-        */
 
         let onKeyDown=key=>{
             (async ()=>{
-                /*uncomment when the message passing works lmao
-                if(key==="Numpad1"){
-                    await this._pause();
+                switch(key){
+                    case "Numpad0":
+                        await this._pause();
+                        break;
+                    case "NumpadDecimal":
+                        await this._advance();
                 }
-                */
-                alert(key);//TODO DEBUG
             })();
         };
         try{await page.exposeFunction("onKeyDown", onKeyDown);}catch(e){}
@@ -80,10 +68,7 @@ class BrowserController{
 
     async _pause(){
         let page=(await this.browser.pages())[0];
-        let frames=(await page.$$("iframe"));
-        for(let i=0; i<frames.length; i++){
-            frames[i]=await frames[i].contentFrame();
-        }
+        let frames=page.frames();
 
         if(!this._paused){
             this._paused=true;
@@ -117,6 +102,30 @@ class BrowserController{
             let performanceFunc=()=>{
                 let offset=performance.now()-window.realPerformanceNow.call(performance);
                 performance.now=()=>window.realPerformanceNow.call(performance)+offset;
+            };
+
+            await page.evaluate(dateFunc);
+            await page.evaluate(performanceFunc);
+
+            frames.forEach(frame=>{
+                frame.evaluate(dateFunc);
+                frame.evaluate(performanceFunc);
+            });
+        }
+    }
+
+    async _advance(){
+        if(this._paused){
+            let page=(await this.browser.pages())[0];
+            let frames=page.frames();
+
+            let dateFunc=()=>{
+                let offset=Date.now()+1000/60;
+                Date.now=()=>offset;
+            };
+            let performanceFunc=()=>{
+                let offset=performance.now()+1000/60;
+                performance.now=()=>offset;
             };
 
             await page.evaluate(dateFunc);
