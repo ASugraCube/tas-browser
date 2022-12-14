@@ -20,7 +20,7 @@ class BrowserController{
         this._paused=false;
     }
 
-    async attach(){
+    async attach(paramOnKeyDown, paramOnKeyUp){
         let page=(await this.browser.pages())[0];
         let frames=page.frames();
 
@@ -33,17 +33,30 @@ class BrowserController{
                     case "NumpadDecimal":
                         await this._advance();
                 }
+                paramOnKeyDown(key);
             })();
         };
+        let onKeyUp=key=>{
+            paramOnKeyUp(key);
+        };
+
         try{await page.exposeFunction("onKeyDown", onKeyDown);}catch(e){}
+        try{await page.exposeFunction("onKeyUp", onKeyUp);}catch(e){}
         let parentOrigin=await page.evaluate(()=>{
             if(!window.isTasAttached){
                 window.isTasAttached=true;
 
                 addEventListener("keydown", e=>onKeyDown(e.code));
+                addEventListener("keyup", e=>onKeyUp(e.code));
                 
                 let onMessage=e=>{
-                    if(e.data.message==="keydown") onKeyDown(e.data.key);
+                    switch(e.data.message){
+                        case "keydown":
+                            onKeyDown(e.data.key);
+                            break;
+                        case "keyup":
+                            onKeyUp(e.data.key);
+                    }
                 }
                 addEventListener("message", onMessage, false);
             }
@@ -58,6 +71,12 @@ class BrowserController{
                     addEventListener("keydown", e=>{
                         parent.postMessage({
                             message: "keydown",
+                            key: e.code
+                        }, parentOrigin);
+                    });
+                    addEventListener("keyup", e=>{
+                        parent.postMessage({
+                            message: "keyup",
                             key: e.code
                         }, parentOrigin);
                     });
