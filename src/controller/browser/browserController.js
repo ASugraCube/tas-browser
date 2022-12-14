@@ -1,4 +1,5 @@
 let puppeteer=require("puppeteer");
+let settings=require("../../model/settings.js");
 
 class BrowserController{
     constructor(){
@@ -27,10 +28,10 @@ class BrowserController{
         let onKeyDown=key=>{
             (async ()=>{
                 switch(key){
-                    case "Numpad0":
+                    case settings.pauseButton:
                         await this._pause();
                         break;
-                    case "NumpadDecimal":
+                    case settings.advanceButton:
                         await this._advance();
                 }
                 paramOnKeyDown(key);
@@ -114,21 +115,23 @@ class BrowserController{
         else{
             this._paused=false;
 
-            let dateFunc=()=>{
-                let offset=Date.now()-window.realDateNow.call(Date);
-                Date.now=()=>window.realDateNow.call(Date)+offset;
+            let dateFunc=(speed)=>{
+                let realOffset=-window.realDateNow.call(Date);
+                let fakeOffset=Date.now();
+                Date.now=()=>(window.realDateNow.call(Date)+realOffset)*speed+fakeOffset;
             };
-            let performanceFunc=()=>{
-                let offset=performance.now()-window.realPerformanceNow.call(performance);
-                performance.now=()=>window.realPerformanceNow.call(performance)+offset;
+            let performanceFunc=(speed)=>{
+                let realOffset=-window.realPerformanceNow.call(performance);
+                let fakeOffset=performance.now();
+                performance.now=()=>(window.realPerformanceNow.call(performance)+realOffset)*speed+fakeOffset;
             };
 
-            await page.evaluate(dateFunc);
-            await page.evaluate(performanceFunc);
+            await page.evaluate(dateFunc, settings.speed);
+            await page.evaluate(performanceFunc, settings.speed);
 
             frames.forEach(frame=>{
-                frame.evaluate(dateFunc);
-                frame.evaluate(performanceFunc);
+                frame.evaluate(dateFunc, settings.speed);
+                frame.evaluate(performanceFunc, settings.speed);
             });
         }
     }

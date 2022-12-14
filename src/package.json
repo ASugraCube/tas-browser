@@ -1,8 +1,10 @@
 {
   "name": "src",
-  "main": "view/index.html",
+  "main": "view/editor.html",
   "window": {
-    "title": "TAS Browser"
+    "title": "TAS Browser",
+    "width": 500,
+    "height": 500
   },
   "dependencies": {
     "puppeteer": "^19.3.0"

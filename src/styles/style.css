@@ -40,11 +40,18 @@ a:active{
     background-color:rgb(189, 243, 233);
 }
 
-input[type="text"]{
+input[type="text"], [type="number"]{
     border:2px solid #000;
     color:#000;
     display:inline-block;
     line-height:1.2em;
-    width:10em;
     outline:none;
+}
+
+input[type="text"]{
+    width:10em;
+}
+
+input[type="number"]{
+    width:3em;
 }

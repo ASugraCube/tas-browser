@@ -9,11 +9,15 @@
     <script src="../controller/editor.js" defer></script>
 </head>
 <body>
-    <a href="./index.html">Exit</a>
+    <!--<a href="./index.html">Exit</a>-->
     <p id="inputs">Inputs: </p>
     <span class="br"></span>
     <a href="#" onclick="attachButtonClick()">Attach</a>
     <span class="br"></span>
-    <span>Pause/Unpause key: <input type="text"></span>
+    <span>Game Speed: <input type="number" id="speed-input" onchange="onSpeedInput()"></span>
+    <span class="br"></span>
+    <span>Pause/Unpause key: <input type="text" id="pause-input" onchange="onPauseInput()"></span>
+    <span class="br"></span>
+    <span>Frame Advance key: <input type="text" id="advance-input" onchange="onAdvanceInput()"></span>
 </body>
 </html>
